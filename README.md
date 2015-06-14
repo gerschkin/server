@@ -1,0 +1,2 @@
+# server
+Gerschkin Server
