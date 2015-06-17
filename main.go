@@ -6,20 +6,27 @@ import (
 	"github.com/gerschkin/server/rpc"
 	"github.com/valyala/gorpc"
 	"gopkg.in/alecthomas/kingpin.v2"
+	"gopkg.in/inconshreveable/log15.v2"
 	"os"
 )
 
-var conf config.Server
+var (
+	conf config.Server
+	log  log15.Logger
+)
 
 func main() {
 	// Parse flags
 	kingpin.Parse()
 
+	// Create loggers.
+	log = log15.New()
+
 	// Try and read the configuration file. If we can't read the file then
 	// we exit with exit code 1.
 	err := config.ReadServer(*configPath, &conf)
 	if err != nil {
-		fmt.Println("Could not read config:", err)
+		log.Crit("could not read config", "error", err)
 		os.Exit(1)
 	}
 
@@ -33,7 +40,7 @@ func main() {
 	// code 2.
 	server := gorpc.NewTCPServer(addr, handleRequests)
 	if err := server.Serve(); err != nil {
-		fmt.Println(err)
+		log.Crit("tpc rpc server stopped", "error", err)
 		os.Exit(2)
 	}
 
