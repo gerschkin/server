@@ -11,7 +11,7 @@ import (
 func authenticated(request rpc.Request) bool {
 	// TODO
 	// - authenticate
-	return false
+	return true
 }
 
 // The unexported func handleRequests handles all incoming tcp
@@ -39,10 +39,13 @@ func handleRequests(clientAddr string, request interface{}) interface{} {
 	// type of request we've been given and act accordingly.
 	switch req.Type {
 	case rpc.REQUEST_PING:
+		reqlog.Info("ping received", "request", req)
 		return pong(req)
-	default:
-		return invalidRequest(req)
 	}
+
+	// If we get this far then we have an invalid request.
+	reqlog.Info("invalid request", "request", req)
+	return invalidRequest(req)
 }
 
 // The unexported func pong just sends a response back to the
