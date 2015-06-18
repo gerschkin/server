@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gerschkin/config"
 	"github.com/gerschkin/server/rpc"
+	"github.com/gerschkin/server/web"
 	"github.com/valyala/gorpc"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"gopkg.in/inconshreveable/log15.v2"
@@ -28,6 +29,14 @@ func main() {
 	if err != nil {
 		log.Crit("could not read config", "error", err)
 		os.Exit(1)
+	}
+
+	// Check if we have the web facing side of the server enabled.
+	if conf.Web.Enabled {
+		// We're not using a wait group or anything to keep the http server
+		// running because if the rpc server fails we want to shut down the
+		// whole application anyways.
+		go web.Serve(conf)
 	}
 
 	// Register rpc types that we accept, and figure out the address to use

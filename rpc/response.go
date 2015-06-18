@@ -27,6 +27,6 @@ type Response struct {
 func ResponseNotAuthorized(request Request) Response {
 	return Response{
 		Request: request,
-		Status: RESPONSE_NOT_AUTHORIZED,
+		Status:  RESPONSE_NOT_AUTHORIZED,
 	}
 }
